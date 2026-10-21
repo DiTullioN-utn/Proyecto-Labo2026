@@ -4,14 +4,14 @@ Algoritmo tablero
 	
 	cargartablero(table)
 
-	moverFicha(table)
+	JUEGODAMAS(table)
 	
 	
 FinAlgoritmo
 
+
 Funcion cargartablero(table)                // "+" fichas blancas "-" fichas negras "[ ]" espacio vacio
 	Definir i, j Como Entero
-
 	Para i<-0 Hasta 9 Con Paso 1 Hacer
 		Para j<-0 Hasta 9 Con Paso 1 Hacer
 			table[i,j] <- "[ ]"
@@ -31,13 +31,15 @@ Funcion cargartablero(table)                // "+" fichas blancas "-" fichas neg
 			FinSi
 		FinPara
 	FinPara
-	
 	mostrarTablero(table)
-	
 FinFuncion
 
 Funcion mostrarTablero(table)
 	Definir i, j Como Entero
+	Escribir "=== JUEGO DE DAMAS ==="
+	Escribir ""
+	Escribir "Fichas: + son las fichas blancas y # es la dama blanca | - son las fichas negras y & es la dama negra"
+	Escribir ""
 	Para i<-0 Hasta 10 Con Paso 1 Hacer
 		Para j<-0 Hasta 10 Con Paso 1 Hacer
 			si i == 0 y j == 0 Entonces
@@ -52,20 +54,28 @@ Funcion mostrarTablero(table)
 			si i <> 0 y j <> 0 Entonces
 				Escribir Sin Saltar table[i-1,j-1], "  "
 			FinSi
-			
 		FinPara
 		Escribir " "
 	FinPara
 FinFuncion
 
-Funcion moverFicha(table)
+Funcion JUEGODAMAS(table)
 	Definir flag Como Logico
 	flag <- Verdadero
-	Definir fila, columna Como Entero
+	Definir cantidadBLA, cantidadNEG Como Entero
+	cantidadBLA <- 20
+	cantidadNEG <- 20
+	Definir fila, columna, intermedioCOLUM Como Entero
 	Definir fila1, columna1 Como Entero
 	Definir i, j Como Entero
+	Definir turno Como Entero
+	
+	turno <- 1
 	
 	Repetir
+		Escribir ""
+		Escribir "## TURNO DEL JUGADOR ", turno, " ##"
+		Escribir ""
 		Escribir "Que ficha desea mover?"
 		Escribir Sin Saltar "Fila: "
 		Leer fila
@@ -73,42 +83,163 @@ Funcion moverFicha(table)
 		Leer columna
 		
 		Si (fila <= 9 y fila >= 0) y (columna >= 0 y columna <= 9) Entonces
-			
-			Si puedemover(table, fila, columna) Entonces
+			Si puedecomer(table, fila, columna, turno) Entonces
 				Repetir
-					Escribir "Hacia donde quiere mover la ficha?"
+					Escribir "Indique las coordenadas de movimiento luego de comer la ficha enemiga: "
 					Escribir Sin Saltar "Fila: "
 					Leer fila1
 					Escribir Sin Saltar "Columna: "
 					Leer columna1
 					
-					Si (fila1 <= 9 y fila1 >= 0) y (columna1 >= 0 y columna1 <= 9) Entonces
-					
-					Si (fila1 == fila-1 y columna1 == columna-1) o (fila1 == fila-1 y columna1 == columna+1) y table[fila1, columna1] == "[ ]" Entonces
-						table[fila1, columna1] <- " + "
-						table[fila, columna] <- "[ ]"
-						flag <- Falso
-						Limpiar Pantalla
-						mostrarTablero(table)
+					Si turno == 1 entonces 
+						Si (fila1 <= 9 y fila1 >= 0) y (columna1 >= 0 y columna1 <= 9) Entonces
+							Si (fila1 == fila-2 y columna1 == columna-2) o (fila1 == fila-2 y columna1 == columna+2) y table[fila1, columna1] == "[ ]" Entonces
+								table[fila1, columna1] <- " + "
+								table[fila, columna] <- "[ ]"
+								intermedioCOLUM <- columna1 - columna
+								si intermedioCOLUM < 0 Entonces
+									intermedioCOLUM <- intermedioCOLUM + 1
+									si columna < intermedioCOLUM Entonces
+										table[fila-1, intermedioCOLUM - columna] <- "[ ]"
+									SiNo
+										table[fila-1, columna + intermedioCOLUM] <- "[ ]"
+									FinSi
+								SiNo
+									intermedioCOLUM <- intermedioCOLUM - 1
+									si columna < intermedioCOLUM Entonces
+										table[fila-1, intermedioCOLUM - columna] <- "[ ]"
+									SiNo
+										table[fila-1, columna + intermedioCOLUM] <- "[ ]"
+									FinSi
+								FinSi
+								Limpiar Pantalla
+								mostrarTablero(table)
+								flag <- Falso
+								
+							SiNo
+								Escribir "No es una cordenada valida, intentelo de nuevo"
+								Esperar Tecla
+								Limpiar Pantalla
+								mostrarTablero(table)
+							FinSi
+						SiNo
+							Escribir "No son coordenadas dentro del tablero, intentelo de nuevo"
+							Esperar Tecla
+							Limpiar Pantalla
+							mostrarTablero(table)
+						FinSi
 					SiNo
-						Escribir "No es una cordenada valida, intentelo de nuevo"
-						Esperar Tecla
-						Limpiar Pantalla
-						mostrarTablero(table)
+						Si (fila1 <= 9 y fila1 >= 0) y (columna1 >= 0 y columna1 <= 9) Entonces
+							Si (fila1 == fila+2 y columna1 == columna-2) o (fila1 == fila+2 y columna1 == columna+2) y table[fila1, columna1] == "[ ]" Entonces
+								table[fila1, columna1] <- " - "
+								table[fila, columna] <- "[ ]"
+								intermedioCOLUM <- columna1 - columna
+								si intermedioCOLUM < 0 Entonces
+									intermedioCOLUM <- intermedioCOLUM + 1
+									si columna < intermedioCOLUM Entonces
+										table[fila+1, intermedioCOLUM - columna] <- "[ ]"
+									SiNo
+										table[fila+1, columna + intermedioCOLUM] <- "[ ]"
+									FinSi
+								SiNo
+									intermedioCOLUM <- intermedioCOLUM - 1
+									si columna < intermedioCOLUM Entonces
+										table[fila+1, intermedioCOLUM - columna] <- "[ ]"
+									SiNo
+										table[fila+1, columna + intermedioCOLUM] <- "[ ]"
+									FinSi
+								FinSi
+								Limpiar Pantalla
+								mostrarTablero(table)
+								flag <- Falso
+								
+							SiNo
+								Escribir "No es una cordenada valida, intentelo de nuevo"
+								Esperar Tecla
+								Limpiar Pantalla
+								mostrarTablero(table)
+							FinSi
+						SiNo
+							Escribir "No son coordenadas dentro del tablero, intentelo de nuevo"
+							Esperar Tecla
+							Limpiar Pantalla
+							mostrarTablero(table)
+						FinSi
 					FinSi
-					SiNo
-						Escribir "No son coordenadas dentro del tablero, intentelo de nuevo"
-						Esperar Tecla
-						Limpiar Pantalla
-						mostrarTablero(table)
-					FinSi	
-
-				Mientras Que flag
+				Mientras Que puedecomer(table, fila1, columna1, turno)
+				Si turno == 1 Entonces
+					turno <- 2
+				SiNo
+					turno <- 1
+				FinSi
 			SiNo
-				Escribir "Ese espacio no hay una ficha valida seleccionada, intentelo de nuevo"
-				Esperar Tecla
-				Limpiar Pantalla
-				mostrarTablero(table)
+				Si puedemover(table, fila, columna, turno) Entonces
+					Repetir
+						Escribir "Hacia donde quiere mover la ficha?"
+						Escribir Sin Saltar "Fila: "
+						Leer fila1
+						Escribir Sin Saltar "Columna: "
+						Leer columna1
+						Si turno == 1 entonces 
+							Si (fila1 <= 9 y fila1 >= 0) y (columna1 >= 0 y columna1 <= 9) Entonces
+								Si (fila1 == fila-1 y columna1 == columna-1) o (fila1 == fila-1 y columna1 == columna+1) y table[fila1, columna1] == "[ ]" Entonces
+									table[fila1, columna1] <- " + "
+									table[fila, columna] <- "[ ]"
+									Limpiar Pantalla
+									mostrarTablero(table)
+									flag <- Falso
+									Si turno == 1 Entonces
+										turno <- 2
+									SiNo
+										turno <- 1
+									FinSi
+								SiNo
+									Escribir "No es una cordenada valida, intentelo de nuevo"
+									Esperar Tecla
+									Limpiar Pantalla
+									mostrarTablero(table)
+								FinSi
+							SiNo
+								Escribir "No son coordenadas dentro del tablero, intentelo de nuevo"
+								Esperar Tecla
+								Limpiar Pantalla
+								mostrarTablero(table)
+							FinSi
+						SiNo
+							Si (fila1 <= 9 y fila1 >= 0) y (columna1 >= 0 y columna1 <= 9) Entonces
+								Si (fila1 == fila+1 y columna1 == columna-1) o (fila1 == fila+1 y columna1 == columna+1) y table[fila1, columna1] == "[ ]" Entonces
+									table[fila1, columna1] <- " - "
+									table[fila, columna] <- "[ ]"
+									Limpiar Pantalla
+									mostrarTablero(table)
+									flag <- Falso
+									Si turno == 1 Entonces
+										turno <- 2
+									SiNo
+										turno <- 1
+									FinSi
+								SiNo
+									Escribir "No es una cordenada valida, intentelo de nuevo"
+									Esperar Tecla
+									Limpiar Pantalla
+									mostrarTablero(table)
+								FinSi
+							SiNo
+								Escribir "No son coordenadas dentro del tablero, intentelo de nuevo"
+								Esperar Tecla
+								Limpiar Pantalla
+								mostrarTablero(table)
+							FinSi
+						FinSi
+					
+					Mientras Que flag
+					
+				SiNo
+					Escribir "Ese espacio no hay una ficha valida seleccionada, intentelo de nuevo"
+					Esperar Tecla
+					Limpiar Pantalla
+					mostrarTablero(table)
+				FinSi
 			FinSi
 		SiNo
 			Escribir "No son coordenadas dentro del tablero, intentelo de nuevo"
@@ -117,45 +248,105 @@ Funcion moverFicha(table)
 			mostrarTablero(table)
 		FinSi
 		
-		
-		
-	Mientras Que flag
-	
+	Mientras Que cantidadBLA > 0 y cantidadNEG > 0
 	
 FinFuncion
 
-Funcion booleano <- puedemover(table, fila, columna)
+Funcion booleano <- puedemover(table, fila, columna, turno)
 	Definir booleano Como Logico
 	
-	si fila <> 0 Entonces
 	
 	Segun columna Hacer
 		0:
-			Si table[fila,columna] == " + " y table[fila-1, columna+1] == "[ ]" Entonces
+			Si (turno == 1 y (table[fila,columna] == " + " o table[fila,columna] == " # ") y table[fila-1, columna+1] == "[ ]") o (turno == 2 y (table[fila,columna] == " - " o table[fila,columna] == " & ") y table[fila+1, columna+1] == "[ ]") Entonces
 				booleano <- Verdadero
 			SiNo
 				booleano <- Falso
 			FinSi
 		9:
-			Si table[fila,columna] == " + " y table[fila-1, columna-1] == "[ ]" Entonces
+			Si (turno == 1 y (table[fila,columna] == " + " o table[fila,columna] == " # ") y table[fila-1, columna-1] == "[ ]") o (turno == 2 y (table[fila,columna] == " - " o table[fila,columna] == " & ") y table[fila+1, columna-1] == "[ ]") Entonces
 				booleano <- Verdadero
 			SiNo
 				booleano <- Falso
 			FinSi
 		De Otro Modo:
-			Si table[fila,columna] == " + " y (table[fila-1, columna+1] == "[ ]" o table[fila-1, columna-1] == "[ ]") Entonces
+			Si (turno == 1 y (table[fila,columna] == " + " o table[fila,columna] == " # ") y (table[fila-1, columna+1] == "[ ]" o table[fila-1, columna-1] == "[ ]")) o (turno == 2 y (table[fila,columna] == " - " o table[fila,columna] == " & ") y (table[fila+1, columna+1] == "[ ]" o table[fila+1, columna-1] == "[ ]")) Entonces
 				booleano <- Verdadero
 			SiNo
 				booleano <- Falso
 			FinSi
 	FinSegun
 	
-	SiNo
-		booleano <- Falso
-	FinSi
+	
+FinFuncion
 
+Funcion comer <- puedecomer (table, fila, columna, turno)
+	Definir comer Como Logico
+	
+	Segun columna Hacer
+		0:
+			Si (turno == 1 y (table[fila,columna] == " + " o table[fila,columna] == " # ") y table[fila-1, columna+1] == " - ") o (turno == 2 y (table[fila,columna] == " - " o table[fila,columna] == " & ") y table[fila+1, columna+1] == " + ") Entonces
+				Si (turno == 1 y (table[fila,columna] == " + " o table[fila,columna] == " # ") y table[fila-2, columna+2] == "[ ]") o (turno == 2 y (table[fila,columna] == " - " o table[fila,columna] == " & ") y table[fila+2, columna+2] == "[ ]") Entonces
+					comer <- Verdadero
+				SiNo
+					comer <- Falso
+				FinSi
+			SiNo
+				comer <- Falso
+			FinSi
+		1:
+			Si (turno == 1 y (table[fila,columna] == " + " o table[fila,columna] == " # ") y table[fila-1, columna+1] == " - ") o (turno == 2 y (table[fila,columna] == " - " o table[fila,columna] == " & ") y table[fila+1, columna+1] == " + ") Entonces
+				Si (turno == 1 y (table[fila,columna] == " + " o table[fila,columna] == " # ") y table[fila-2, columna+2] == "[ ]") o (turno == 2 y (table[fila,columna] == " - " o table[fila,columna] == " & ") y table[fila+2, columna+2] == "[ ]") Entonces
+					comer <- Verdadero
+				SiNo
+					comer <- Falso
+				FinSi
+			SiNo
+				comer <- Falso
+			FinSi
+		9:
+			Si (turno == 1 y (table[fila,columna] == " + " o table[fila,columna] == " # ") y table[fila-1, columna-1] == " - ") o (turno == 2 y (table[fila,columna] == " - " o table[fila,columna] == " & ") y table[fila+1, columna-1] == " + ") Entonces
+				Si (turno == 1 y (table[fila,columna] == " + " o table[fila,columna] == " # ") y table[fila-2, columna-2] == "[ ]") o (turno == 2 y (table[fila,columna] == " - " o table[fila,columna] == " & ") y table[fila+2, columna-2] == "[ ]") Entonces
+					comer <- Verdadero
+				SiNo
+					comer <- Falso
+				FinSi
+			SiNo
+				comer <- Falso
+			FinSi
+		8: 
+			Si (turno == 1 y (table[fila,columna] == " + " o table[fila,columna] == " # ") y table[fila-1, columna-1] == " - ") o (turno == 2 y (table[fila,columna] == " - " o table[fila,columna] == " & ") y table[fila+1, columna-1] == " + ") Entonces
+				Si (turno == 1 y (table[fila,columna] == " + " o table[fila,columna] == " # ") y table[fila-2, columna-2] == "[ ]") o (turno == 2 y (table[fila,columna] == " - " o table[fila,columna] == " & ") y table[fila+2, columna-2] == "[ ]") Entonces
+					comer <- Verdadero
+				SiNo
+					comer <- Falso
+				FinSi
+			SiNo
+				comer <- Falso
+			FinSi
+		De Otro Modo:
+			Si (turno == 1 y (table[fila,columna] == " + " o table[fila,columna] == " # ") y (table[fila-1, columna+1] == " - " o table[fila-1, columna-1] == " - ")) o (turno == 2 y (table[fila,columna] == " - " o table[fila,columna] == " & ") y (table[fila+1, columna+1] == " + " o table[fila+1, columna-1] == " + ")) Entonces
+				Si (turno == 1 y (table[fila,columna] == " + " o table[fila,columna] == " # ") y (table[fila-2, columna+2] == "[ ]" o table[fila-2, columna-2] == "[ ]")) o (turno == 2 y (table[fila,columna] == " - " o table[fila,columna] == " & ") y (table[fila+2, columna+2] == "[ ]" o table[fila+2, columna-2] == "[ ]")) Entonces
+					comer <- Verdadero
+				SiNo
+					comer <- Falso
+				FinSi
+			SiNo
+				comer <- Falso
+			FinSi
+	FinSegun
+	
 	
 	
 FinFuncion
 
-	
+Funcion DAMA <- esDama (table, fila, columna, turno)
+	Definir DAMA Como Logico
+	Si (turno == 1 y table[fila, columna] == " + ") o (turno == 2 y table[fila, columna] == " - ") Entonces
+		DAMA <- Falso
+	SiNo
+		Si (turno == 1 y table[fila, columna] == " # ") o (turno == 2 y table[fila, columna] == " & ") Entonces
+			DAMA <- Verdadero
+		FinSi
+	FinSi
+FinFuncion
