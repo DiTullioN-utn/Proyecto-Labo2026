@@ -1,0 +1,161 @@
+Algoritmo tablero
+	Definir table Como Caracter
+	Dimensionar table[10,10]
+	
+	cargartablero(table)
+
+	moverFicha(table)
+	
+	
+FinAlgoritmo
+
+Funcion cargartablero(table)                // "+" fichas blancas "-" fichas negras "[ ]" espacio vacio
+	Definir i, j Como Entero
+
+	Para i<-0 Hasta 9 Con Paso 1 Hacer
+		Para j<-0 Hasta 9 Con Paso 1 Hacer
+			table[i,j] <- "[ ]"
+			Si i mod 2 == 0 y i < 4 y j mod 2 == 1 Entonces
+				table[i,j] <- " - "
+			SiNo
+				Si i mod 2 == 1 y i < 4 y j mod 2 == 0 Entonces
+					table[i,j] <- " - "
+				FinSi
+			FinSi
+			Si i mod 2 == 0 y i > 5 y j mod 2 == 1 Entonces
+				table[i,j] <- " + "
+			SiNo
+				Si i mod 2 == 1 y i > 5 y j mod 2 == 0 Entonces
+					table[i,j] <- " + "
+				FinSi
+			FinSi
+		FinPara
+	FinPara
+	
+	mostrarTablero(table)
+	
+FinFuncion
+
+Funcion mostrarTablero(table)
+	Definir i, j Como Entero
+	Para i<-0 Hasta 10 Con Paso 1 Hacer
+		Para j<-0 Hasta 10 Con Paso 1 Hacer
+			si i == 0 y j == 0 Entonces
+				Escribir Sin Saltar "    "
+			FinSi
+			si i == 0 y j <> 0 Entonces
+				Escribir Sin Saltar j-1, "    "
+			FinSi
+			si i <> 0 y j == 0 Entonces
+				Escribir Sin Saltar i-1, "| "
+			FinSi
+			si i <> 0 y j <> 0 Entonces
+				Escribir Sin Saltar table[i-1,j-1], "  "
+			FinSi
+			
+		FinPara
+		Escribir " "
+	FinPara
+FinFuncion
+
+Funcion moverFicha(table)
+	Definir flag Como Logico
+	flag <- Verdadero
+	Definir fila, columna Como Entero
+	Definir fila1, columna1 Como Entero
+	Definir i, j Como Entero
+	
+	Repetir
+		Escribir "Que ficha desea mover?"
+		Escribir Sin Saltar "Fila: "
+		Leer fila
+		Escribir Sin Saltar "Columna: "
+		Leer columna
+		
+		Si (fila <= 9 y fila >= 0) y (columna >= 0 y columna <= 9) Entonces
+			
+			Si puedemover(table, fila, columna) Entonces
+				Repetir
+					Escribir "Hacia donde quiere mover la ficha?"
+					Escribir Sin Saltar "Fila: "
+					Leer fila1
+					Escribir Sin Saltar "Columna: "
+					Leer columna1
+					
+					Si (fila1 <= 9 y fila1 >= 0) y (columna1 >= 0 y columna1 <= 9) Entonces
+					
+					Si (fila1 == fila-1 y columna1 == columna-1) o (fila1 == fila-1 y columna1 == columna+1) y table[fila1, columna1] == "[ ]" Entonces
+						table[fila1, columna1] <- " + "
+						table[fila, columna] <- "[ ]"
+						flag <- Falso
+						Limpiar Pantalla
+						mostrarTablero(table)
+					SiNo
+						Escribir "No es una cordenada valida, intentelo de nuevo"
+						Esperar Tecla
+						Limpiar Pantalla
+						mostrarTablero(table)
+					FinSi
+					SiNo
+						Escribir "No son coordenadas dentro del tablero, intentelo de nuevo"
+						Esperar Tecla
+						Limpiar Pantalla
+						mostrarTablero(table)
+					FinSi	
+
+				Mientras Que flag
+			SiNo
+				Escribir "Ese espacio no hay una ficha valida seleccionada, intentelo de nuevo"
+				Esperar Tecla
+				Limpiar Pantalla
+				mostrarTablero(table)
+			FinSi
+		SiNo
+			Escribir "No son coordenadas dentro del tablero, intentelo de nuevo"
+			Esperar Tecla
+			Limpiar Pantalla
+			mostrarTablero(table)
+		FinSi
+		
+		
+		
+	Mientras Que flag
+	
+	
+FinFuncion
+
+Funcion booleano <- puedemover(table, fila, columna)
+	Definir booleano Como Logico
+	
+	si fila <> 0 Entonces
+	
+	Segun columna Hacer
+		0:
+			Si table[fila,columna] == " + " y table[fila-1, columna+1] == "[ ]" Entonces
+				booleano <- Verdadero
+			SiNo
+				booleano <- Falso
+			FinSi
+		9:
+			Si table[fila,columna] == " + " y table[fila-1, columna-1] == "[ ]" Entonces
+				booleano <- Verdadero
+			SiNo
+				booleano <- Falso
+			FinSi
+		De Otro Modo:
+			Si table[fila,columna] == " + " y (table[fila-1, columna+1] == "[ ]" o table[fila-1, columna-1] == "[ ]") Entonces
+				booleano <- Verdadero
+			SiNo
+				booleano <- Falso
+			FinSi
+	FinSegun
+	
+	SiNo
+		booleano <- Falso
+	FinSi
+
+	
+	
+FinFuncion
+
+	
